@@ -1,0 +1,41 @@
+.root {
+    width: 350px;
+}
+
+.title {
+    width: 350px;
+    height: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.calendar-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 36px;
+    border: none;
+    background-color: transparent;
+}
+
+.selected-day {
+    color: white;
+    background-color: blue;
+}
+
+.day:hover {
+    cursor: pointer;
+}
+
+.day:disabled:hover {
+    cursor: not-allowed;
+}
