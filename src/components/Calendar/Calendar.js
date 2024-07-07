@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Calendar.css';
 
 const Calendar = () => {
-  const currentDate = new Date();
-  const [dateList, setDateList] = useState([]);
+  const [dateListObject, setDateListObject] = useState({});
   const [range, setRange] = useState({ clickCount: 0, start: null, end: null });
 
-  const handleClick = (index) => {
+  const handleDateClick = (index) => {
     if (range.clickCount === 2) return;
     if (range.clickCount === 0) {
       setRange({ ...range, clickCount: 1, start: index });
@@ -19,7 +18,8 @@ const Calendar = () => {
     setRange({ clickCount: 0, start: null, end: null });
   };
 
-  useEffect(() => {
+  const generateDateList = useCallback(() => {
+    const currentDate = new Date();
     let list = [];
     let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 
@@ -32,6 +32,7 @@ const Calendar = () => {
         id: date,
         selected: false,
         today: false,
+        disabled: true,
       });
       date.setDate(date.getDate() + 1);
     }
@@ -47,6 +48,7 @@ const Calendar = () => {
           list.length >= range.start &&
           list.length <= range.end,
         today: date.getDate() === currentDate.getDate(),
+        disabled: false,
       });
       date.setDate(date.getDate() + 1);
     }
@@ -58,27 +60,37 @@ const Calendar = () => {
         id: date,
         selected: false,
         today: false,
+        disabled: true,
       });
       date.setDate(date.getDate() + 1);
     }
-    setDateList(list);
+    return {
+      title: `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月`,
+      list: list,
+    };
   }, [range]);
+
+  useEffect(() => {
+    setDateListObject(generateDateList());
+  }, [generateDateList]);
 
   return (
     <div className="root">
       <div className="title">
         <div>{'<'}</div>
-        {`${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月`}
+        {dateListObject.title}
         <div>{'>'}</div>
       </div>
       <div className="calendar-wrapper">
-        {dateList.map((date) => (
+        {dateListObject?.list?.map((date) => (
           <button
             key={date.index}
             className={`${date.selected ? 'day selected-day' : 'day'}`}
-            disabled={date.month !== currentDate.getMonth()}
-            onClick={() => handleClick(date.index)}
-          >{`${date.day}日`}</button>
+            disabled={date.disabled}
+            onClick={() => handleDateClick(date.index)}
+          >
+            {`${date.day}日`}
+          </button>
         ))}
       </div>
     </div>
